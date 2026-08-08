@@ -2,6 +2,11 @@
 
 A focused Next.js and Supabase vertical slice for viewing account activity and adding duplicate-safe notes. Authentication is real, and PostgreSQL Row Level Security (RLS)—not a browser-supplied tenant identifier—is the authorization boundary.
 
+## Application overview
+
+- [Live application](https://01-know-your-organization.vercel.app/login)
+- [Loom walkthrough](https://www.loom.com/share/f44828ecc5404a47af2d202bb266009b)
+
 ## Completed scope
 
 - Email/password authentication through Supabase Auth with HTTP-only session cookies.

@@ -102,7 +102,7 @@ The repository history and `AI_USAGE.md` record the important prompts, accepted/
 
 ## 7. Suggested accompanying evidence
 
-Attach these separately or embed selected images before exporting this report to PDF:
+Attach these separately or embed selected images before sending the submission:
 
 1. Login page showing both Quick Demo Access tabs.
 2. Pritam's dropdown showing Acme Corporation and Globex Retail.
@@ -118,11 +118,7 @@ Attach these separately or embed selected images before exporting this report to
 
 Unauthorized accounts are intentionally absent from the dropdown. This is expected UI behavior, not the security boundary. Use the browser Console to simulate a tampered request and confirm that the API and database still deny access.
 
-**Copy-ready online version:** [Open Appendix A on GitHub](https://github.com/pritam16raha/01_Know_your_organization/blob/main/REPORT.md#appendix-a---manual-security-and-idempotency-verification). GitHub renders every block with a native copy button. The code below is also real selectable PDF text, not an image.
-
 ## A.1 Cross-tenant read
-
-[Open this copy-ready test on GitHub](https://github.com/pritam16raha/01_Know_your_organization/blob/main/REPORT.md#a1-cross-tenant-read)
 
 Sign in as **Pritam Raha**, open **DevTools -> Console**, and run:
 
@@ -150,8 +146,6 @@ Response: {
 Pritam belongs to Northstar Labs, while this account belongs to Rival Systems.
 
 ## A.2 Cross-tenant create
-
-[Open this copy-ready test on GitHub](https://github.com/pritam16raha/01_Know_your_organization/blob/main/REPORT.md#a2-cross-tenant-create)
 
 While still signed in as **Pritam Raha**, run:
 
@@ -189,8 +183,6 @@ Response: {
 No note will be created.
 
 ## A.3 Identical retry
-
-[Open this copy-ready test on GitHub](https://github.com/pritam16raha/01_Know_your_organization/blob/main/REPORT.md#a3-identical-retry)
 
 While signed in as **Pritam Raha**, use Globex Retail because it belongs to Northstar Labs:
 
@@ -250,8 +242,6 @@ Same activity ID: true
 The two `activity.id` values must be identical. If the complete test is repeated later, change the idempotency key; otherwise the first request will also be recognized as a retry.
 
 ## A.4 Raw PostgreSQL `42501`
-
-[Open this copy-ready test on GitHub](https://github.com/pritam16raha/01_Know_your_organization/blob/main/REPORT.md#a4-raw-postgresql-42501)
 
 The Next.js API intentionally maps database `42501` to HTTP `403` so internal database details are not exposed to the frontend.
 
