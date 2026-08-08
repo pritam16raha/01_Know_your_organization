@@ -72,7 +72,7 @@ The candidate asked whether the ChatGPT shared-conversation URL should be includ
 
 ### Submission email and walkthrough refinement
 
-The candidate requested a reviewer-facing email, asked how to provide the uncommitted `.env` values, and supplied a Loom application overview. The Loom link was verified before inclusion in `README.md`. The recommendation was changed for security: runtime-safe Supabase configuration can be supplied to the evaluator, but the database password and personal management access token should not be placed in Git or ordinary email because they are not required to run the application and grant privileged project access.
+The candidate requested a reviewer-facing email, asked how to provide the uncommitted `.env` values, and supplied a Loom application overview. The Loom link was verified before inclusion in `README.md`. The recommendation was changed for security: runtime-safe Supabase configuration can be supplied to the evaluator, but the database password and personal management access token should not be placed in Git or ordinary email because they are not required to run the application and grant privileged project access. The candidate later supplied a Supabase schema export, which was copied unchanged into a tracked documentation asset and linked from the README architecture section.
 
 ## Refined prompt
 

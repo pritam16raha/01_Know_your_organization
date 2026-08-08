@@ -41,6 +41,12 @@ Browser
 
 The application never accepts `organization_id` from the browser. It accepts an account UUID, then PostgreSQL resolves the account through RLS and derives both `organization_id` and `created_by` from `auth.uid()`. Normal application requests use the publishable key and the user's JWT; no service-role credential is present in the application runtime.
 
+### Database schema
+
+The Supabase schema connects authenticated users to tenant memberships, tenant-owned accounts, and account activity entries.
+
+![Supabase database schema showing organizations, memberships, accounts, activity entries, and the auth.users relationship](docs/supabase-schema.png)
+
 ## Requirements
 
 - Node.js 20 or newer
