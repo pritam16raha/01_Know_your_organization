@@ -12,7 +12,8 @@
     "seed:demo": "node scripts/seed-demo.mjs",
     "verify:integration": "node scripts/verify-supabase.mjs",
     "verify:http": "node scripts/verify-http.mjs",
-    "verify:client": "node scripts/verify-client-idempotency.mjs"
+    "verify:client": "node scripts/verify-client-idempotency.mjs",
+    "verify:browser:lan": "node scripts/verify-browser-lan.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "playwright-core": "^1.62.1",
     "typescript": "^5"
   }
 }

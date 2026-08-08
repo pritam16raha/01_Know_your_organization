@@ -42,7 +42,7 @@ The HTTP integration test exercised the deployed Next.js boundary and observed:
 - tenant-A read of tenant-B account: `403`;
 - tenant-A write to tenant-B account: `403`.
 
-Direct RPC denials returned PostgreSQL code `42501`. The client idempotency test covers both native secure-context UUID generation and the cryptographic fallback required by an HTTP LAN origin. Type checking, ESLint, and the optimized Next.js production build all pass.
+Direct RPC denials returned PostgreSQL code `42501`. The client idempotency test covers both native secure-context UUID generation and the cryptographic fallback required by an HTTP LAN origin. A real Edge browser test against `http://192.168.0.111:3000` verifies demo selection, authentication, Globex creation, visible success feedback, a cleared textarea, and exactly one rendered note. Type checking, ESLint, and the optimized Next.js production build all pass.
 
 ## Trade-offs, operations, and remaining work
 
@@ -50,4 +50,4 @@ The assessment models one active organization per identity. The database therefo
 
 For production, I would monitor authentication and authorization failure ratios (`401`, `403`, and PostgreSQL `42501`) by route and release. A sustained increase could identify expired-session problems, membership-sync failures, regressions, or account-ID probing. Logs must omit note bodies, credentials, cookies, tokens, and idempotency keys.
 
-The required feature, submission artifacts, requested demo-login enhancement, and LAN-origin correction were completed in 48 minutes, from 12:40:21 to 13:28:43 IST. Optional screenshots and recording were not produced. Pagination, browser-level Playwright coverage, generated database types, password recovery, CI, request tracing, and real telemetry wiring remain future improvements. These were deliberately deferred to keep the submitted slice small, secure, and verifiable.
+The required feature, submission artifacts, requested demo-login enhancement, LAN-origin correction, and real-browser regression test were completed in 58 minutes, from 12:40:21 to 13:38:26 IST. Optional screenshots and recording were not produced. Pagination, broader browser coverage, generated database types, password recovery, CI, request tracing, and real telemetry wiring remain future improvements. These were deliberately deferred to keep the submitted slice small, secure, and verifiable.

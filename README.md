@@ -129,12 +129,19 @@ $env:TEST_BASE_URL = "http://127.0.0.1:3100"
 npm run verify:http
 ```
 
+Real-browser LAN verification using an installed Edge/Chrome browser:
+
+```powershell
+npm run verify:browser:lan
+```
+
 Observed evidence on 2026-08-08:
 
 | Check | Result |
 | --- | --- |
 | Demo identity selectors | Both organization tabs rendered |
 | Native and insecure-origin idempotency UUID paths | Passed |
+| Real browser at `http://192.168.0.111:3000` | Login, Globex create, visible success, cleared form and one rendered note passed |
 | Unauthenticated workspace | HTTP `401` |
 | Authenticated activity read | HTTP `200` |
 | First create | HTTP `201` |
@@ -150,7 +157,7 @@ One important failure mode is an unexpected rise in authorization denials caused
 
 ## Timebox and trade-offs
 
-Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, requested demo-login enhancement, and LAN-origin correction were completed at **13:28:43 IST** (48 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
+Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, requested demo-login enhancement, LAN-origin correction, and real-browser regression test were completed at **13:38:26 IST** (58 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
 
 Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
 

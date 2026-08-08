@@ -4,7 +4,7 @@
 
 - Assistant: OpenAI Codex
 - Timebox started: 2026-08-08 12:40:21 IST
-- Final implementation, demo-login enhancement, and LAN-origin correction completed: 2026-08-08 13:28:43 IST (48 minutes)
+- Final implementation and real LAN-browser verification completed: 2026-08-08 13:38:26 IST (58 minutes)
 - Candidate retained final responsibility for architecture, security, and verification.
 
 ## Important prompts
@@ -51,3 +51,5 @@ The initial tooling plan assumed the latest Supabase CLI could complete `supabas
 The first generated React data-loading helper changed loading state synchronously when invoked from an effect. The React 19 lint rule correctly rejected this because it can cause cascading renders. The code was changed so effect-triggered helpers update state only after asynchronous I/O; event handlers own immediate loading transitions for retries and account changes.
 
 Manual testing through the candidate's LAN URL exposed another incorrect assumption: `crypto.randomUUID()` is not available to browser JavaScript on an insecure non-localhost origin. Because key creation occurred before the guarded request, submission stopped without a network call or feedback. The corrected implementation uses `randomUUID()` when available, falls back to RFC 4122 version/variant bits over `crypto.getRandomValues()`, resets the key when the draft changes, and generates it inside the handled submission path so any remaining failure produces visible feedback.
+
+When the candidate still observed the old behavior, code-level validation alone was insufficient. Process inspection showed port 3000 was served by a `next start` process created before the corrected production build. Unlike the development server, it could not hot-reload the fix. The stale process was replaced, and a Playwright Core test using the installed Edge browser verified the complete insecure-LAN workflow: demo selection, authentication, Globex submission, visible green feedback, cleared textarea, and one rendered note.

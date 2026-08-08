@@ -2,7 +2,7 @@
 
 Timebox start: **2026-08-08 12:40:21 IST**
 
-Final implementation, demo-login enhancement, and LAN-origin correction completed: **2026-08-08 13:28:43 IST** (48 minutes).
+Final implementation and real LAN-browser verification completed: **2026-08-08 13:38:26 IST** (58 minutes).
 
 ## Planning and repository
 
@@ -42,6 +42,7 @@ Final implementation, demo-login enhancement, and LAN-origin correction complete
 - [x] Show loading, empty, success, and error states.
 - [x] Disable duplicate submissions while a request is active.
 - [x] Support idempotency-key generation from insecure LAN development origins.
+- [x] Verify visible submission feedback in a real browser on the insecure LAN URL.
 
 ## Verification and submission
 
