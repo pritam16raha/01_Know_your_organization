@@ -48,6 +48,12 @@ After reviewing the login page, the candidate requested two demo-user tabs above
 
 Representative prompt excerpt: "Add both demo users at the top of the login page so the investigator can click a tab, fill the respective credentials, and then sign in."
 
+### Local evaluator credential documentation refinement
+
+The candidate later requested that the two seeded demo credentials also be listed in `README.md`, because a local evaluator would not know the identities stored in the ignored credential file. The values were compared with `Frontend/.demo-credentials.json` before documentation. This request changed the earlier documentation decision because these are deliberately exposed, throwaway assessment accounts protected by tenant RLS—not project administration credentials. The README also instructs the candidate to rotate or delete them after evaluation.
+
+Representative prompt excerpt: "Add these two test user credentials into the README file, else in the local run the investigator will face an issue due to unknown user details."
+
 ### Hosted demo-access correction
 
 The candidate reported that the quick-access tabs were present locally but absent from the Vercel deployment. Inspection showed that the server-rendered login page read only the ignored local credential file, which is correctly excluded from deployments. The candidate added four server-only Vercel variables for the two throwaway users and requested the deployment flow be completed. The loader was changed to prefer a complete environment configuration, fall back to the local file only when no demo variables are present, and fail closed when the environment is partial.
@@ -92,9 +98,9 @@ The decision column explicitly records whether each suggestion was accepted, cha
 | Insert demo identities directly into `auth.users` with SQL | Rejected | Real users will be created through the supported Supabase Auth Admin API; the temporary service key is fetched at runtime and never persisted. |
 | Allow independent account and organization foreign keys | Rejected | A composite `(organization_id, account_id)` foreign key makes tenant inconsistency impossible at the relational layer. |
 | Treat Next.js Proxy as the authorization boundary | Rejected | Version-local Next.js guidance says Proxy is appropriate only for optimistic checks; every route authenticates again and PostgreSQL RLS remains authoritative. |
-| Expose generated demo passwords in documentation | Rejected | Random passwords remain in a local ignored file, while setup remains reproducible through the seed command. |
-| Add one-click demo identity selection to the login form | Accepted after candidate request | The server loads complete server-side deployment variables first and otherwise reads the ignored generated credential file; only throwaway demo identities are passed to the login UI, and no credential is committed. |
-| Commit demo passwords so Vercel can render the tabs | Rejected | Hosted evaluator credentials are supplied through server-side environment variables; no password is added to source control. |
+| Expose the current seeded demo passwords in documentation | Changed after candidate request | The current throwaway evaluator accounts are intentionally exposed by the quick-access UI and are now listed in the README for local review. They are RLS-limited application identities, not administration credentials, and must be rotated or deleted after evaluation. |
+| Add one-click demo identity selection to the login form | Accepted after candidate request | The server loads complete server-side deployment variables first and otherwise reads the ignored generated credential file; only throwaway demo identities are passed to the login UI. The later README disclosure is recorded separately above. |
+| Commit demo passwords as deployment configuration so Vercel can render the tabs | Rejected | Hosted evaluator credentials remain server-side environment variables. Their README disclosure is solely for access to the current throwaway evaluator identities, not a replacement for deployment configuration and never a pattern for production users. |
 | Read quick-access credentials only from a local file | Changed after deployment evidence | Vercel correctly omitted the ignored file, so the server loader was extended to prefer a complete hosted environment and fail closed when configuration is partial. |
 | Put all manual commands inside the 1-3 page narrative | Changed for readability | The concise report contains the results table; exact browser and SQL reproduction steps are retained in a clearly labeled appendix. |
 | Install a new PDF conversion dependency | Rejected | The existing Edge installation and a small auditable renderer produced the attachment without expanding the project dependency surface. |
@@ -112,6 +118,8 @@ A temporary PDF was checked for a valid header, non-zero size, a six-page page t
 The shared-conversation URL returned HTTP `200`. The retrieved snapshot contained neither supplied demo-password fragment nor the local Windows project path at verification time; this check does not authorize updating the public snapshot with later messages.
 
 The Loom walkthrough URL returned HTTP `200`, contained the expected video identifier, and did not present a password prompt when checked.
+
+Before adding the evaluator credentials to `README.md`, all four supplied values were compared with the ignored local `Frontend/.demo-credentials.json`. The documented values matched the users that the seed workflow currently maintains.
 
 ## AI corrections
 

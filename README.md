@@ -7,6 +7,17 @@ A focused Next.js and Supabase vertical slice for viewing account activity and a
 - [Live application](https://01-know-your-organization.vercel.app/login)
 - [Loom walkthrough](https://www.loom.com/share/f44828ecc5404a47af2d202bb266009b)
 
+## Demo credentials
+
+Use either seeded evaluator identity on the login page. The **Quick Demo Access** tabs fill these credentials automatically.
+
+| Organization | User | Email | Password | Visible accounts |
+| --- | --- | --- | --- | --- |
+| Northstar Labs | Pritam Raha | `pritam@northstar.test` | `Demo-tJY30fnfmSsYXSCK9lY4qDkW` | Acme Corporation, Globex Retail |
+| Rival Systems | Alex Rival | `alex@rival.test` | `Demo-qy_NAuOb3kNPfSlQN5c-ebQk` | Rival Confidential Account |
+
+These are throwaway assessment users intentionally documented for evaluator access. They provide only authenticated application access subject to PostgreSQL RLS; they are not Supabase administration credentials. Rotate or delete them after the evaluation.
+
 ## Completed scope
 
 - Email/password authentication through Supabase Auth with HTTP-only session cookies.
@@ -75,7 +86,7 @@ The application never accepts `organization_id` from the browser. It accepts an 
    npm run seed:demo
    ```
 
-   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. Random demo passwords are saved only to ignored `Frontend/.demo-credentials.json`. The login page loads complete server-side demo environment variables first and uses that ignored file only when none of the four variables are configured. A partial environment configuration fails closed and disables the tabs. The page exposes these two throwaway identities to the browser solely for the requested one-click evaluator workflow; this convenience must not be enabled for production identities.
+   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. On its first run, it generates random passwords and saves them to ignored `Frontend/.demo-credentials.json`; subsequent runs reuse that file. The currently seeded evaluator credentials are documented above. If the ignored file is deleted before reseeding, use the newly generated values from that file and update the hosted demo environment variables. The login page loads complete server-side demo environment variables first and uses the ignored file only when none of the four variables are configured. A partial environment configuration fails closed and disables the tabs. The page exposes these two throwaway identities to the browser solely for the requested one-click evaluator workflow; this convenience must not be enabled for production identities.
 
 5. Start the application:
 
@@ -83,7 +94,7 @@ The application never accepts `organization_id` from the browser. It accepts an 
    npm run dev
    ```
 
-   Open `http://localhost:3000` and sign in with either identity from `.demo-credentials.json`.
+   Open `http://localhost:3000` and sign in with either documented demo identity. If the project was reseeded after deleting `.demo-credentials.json`, use the newly generated values in that file instead.
 
 ## API operations
 
