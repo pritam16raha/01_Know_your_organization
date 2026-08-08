@@ -5,3 +5,4 @@ Frontend/.next/
 Frontend/node_modules/
 Frontend/supabase/.temp/
 *.log
+*.tsbuildinfo

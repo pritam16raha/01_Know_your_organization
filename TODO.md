@@ -24,20 +24,20 @@ Timebox start: **2026-08-08 12:40:21 IST**
 
 ## Backend operations
 
-- [ ] Add authenticated account-list/read operation.
-- [ ] Add authenticated newest-first activity read operation.
-- [ ] Add validated note-create operation.
-- [ ] Make note creation idempotent with a database uniqueness constraint.
-- [ ] Return understandable authentication, authorization, validation, and server errors.
+- [x] Add authenticated account-list/read operation.
+- [x] Add authenticated newest-first activity read operation.
+- [x] Add validated note-create operation.
+- [x] Make note creation idempotent with a database uniqueness constraint.
+- [x] Return understandable authentication, authorization, validation, and server errors.
 
 ## Frontend vertical slice
 
-- [ ] Integrate the supplied visual design as Next.js components.
-- [ ] Implement real email/password sign-in and sign-out.
-- [ ] Add protected-route session refresh.
-- [ ] Support account selection.
-- [ ] Show loading, empty, success, and error states.
-- [ ] Disable duplicate submissions while a request is active.
+- [x] Integrate the supplied visual design as Next.js components.
+- [x] Implement real email/password sign-in and sign-out.
+- [x] Add protected-route session refresh.
+- [x] Support account selection.
+- [x] Show loading, empty, success, and error states.
+- [x] Disable duplicate submissions while a request is active.
 
 ## Verification and submission
 
@@ -45,7 +45,7 @@ Timebox start: **2026-08-08 12:40:21 IST**
 - [x] Demonstrate Organization A cannot read or write Organization B's account.
 - [x] Demonstrate a retried create does not create a duplicate.
 - [x] Add an automated live Supabase integration test.
-- [ ] Run lint, type checking, and production build.
+- [x] Run lint, type checking, and production build.
 - [ ] Document a production failure mode and detection strategy.
 - [ ] Complete README setup/schema/timebox instructions.
 - [ ] Complete the 1-3 page Markdown report.

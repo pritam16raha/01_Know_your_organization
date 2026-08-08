@@ -1,4 +1,5 @@
-export default function HomePage() {
-  return <main>ActivityHub setup in progress.</main>;
-}
+import { ActivityDashboard } from "@/components/activity/activity-dashboard";
 
+export default function HomePage() {
+  return <ActivityDashboard />;
+}
