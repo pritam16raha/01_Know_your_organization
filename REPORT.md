@@ -50,5 +50,4 @@ The assessment models one active organization per identity. The database therefo
 
 For production, I would monitor authentication and authorization failure ratios (`401`, `403`, and PostgreSQL `42501`) by route and release. A sustained increase could identify expired-session problems, membership-sync failures, regressions, or account-ID probing. Logs must omit note bodies, credentials, cookies, tokens, and idempotency keys.
 
-The required feature is complete within the timebox. Optional screenshots and recording were not produced. Pagination, browser-level Playwright coverage, generated database types, password recovery, CI, request tracing, and real telemetry wiring remain future improvements. These were deliberately deferred to keep the submitted slice small, secure, and verifiable.
-
+The required feature and submission artifacts were completed in 28 minutes, from 12:40:21 to 13:08:22 IST. Optional screenshots and recording were not produced. Pagination, browser-level Playwright coverage, generated database types, password recovery, CI, request tracing, and real telemetry wiring remain future improvements. These were deliberately deferred to keep the submitted slice small, secure, and verifiable.

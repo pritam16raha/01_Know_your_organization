@@ -146,7 +146,7 @@ One important failure mode is an unexpected rise in authorization denials caused
 
 ## Timebox and trade-offs
 
-Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, live security checks, automated tests, and production build were completed inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
+Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice and submission artifacts were completed at **13:08:22 IST** (28 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
 
 Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
 
