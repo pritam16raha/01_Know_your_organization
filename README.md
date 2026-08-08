@@ -49,7 +49,7 @@ The application never accepts `organization_id` from the browser. It accepts an 
    - `SUPABASE_DB_PASSWORD`
    - `SUPABASE_ACCESS_TOKEN`
 
-   `.env`, generated demo credentials, build output, and Supabase link metadata are excluded from Git.
+   `.env`, generated demo credentials, build output, and Supabase link metadata are excluded from Git. For a hosted evaluator deployment, also configure `DEMO_ORG_A_EMAIL`, `DEMO_ORG_A_PASSWORD`, `DEMO_ORG_B_EMAIL`, and `DEMO_ORG_B_PASSWORD` as server-side environment variables. Do not use a `NEXT_PUBLIC_` prefix. Create a new deployment after changing hosted environment variables.
 
 3. Apply the database migration with the Supabase CLI:
 
@@ -70,7 +70,7 @@ The application never accepts `organization_id` from the browser. It accepts an 
    npm run seed:demo
    ```
 
-   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. Random demo passwords are saved only to ignored `Frontend/.demo-credentials.json`. When that file exists, the login page exposes these two throwaway identities to the browser solely for the requested one-click evaluator workflow; this convenience must not be enabled for production identities.
+   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. Random demo passwords are saved only to ignored `Frontend/.demo-credentials.json`. The login page loads complete server-side demo environment variables first and uses that ignored file only when none of the four variables are configured. A partial environment configuration fails closed and disables the tabs. The page exposes these two throwaway identities to the browser solely for the requested one-click evaluator workflow; this convenience must not be enabled for production identities.
 
 5. Start the application:
 
@@ -157,8 +157,8 @@ One important failure mode is an unexpected rise in authorization denials caused
 
 ## Timebox and trade-offs
 
-Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, requested demo-login enhancement, LAN-origin correction, and real-browser regression test were completed at **13:38:26 IST** (58 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
+Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, requested local demo-login enhancement, LAN-origin correction, and real-browser regression test were completed at **13:38:26 IST** (58 minutes), inside the two-hour limit. A separately recorded post-timebox correction at **15:14 IST** added hosted environment-variable support after the Vercel deployment exposed the local-file assumption. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
 
-Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
+Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add broader Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
 
 See [REPORT.md](REPORT.md), [AI_USAGE.md](AI_USAGE.md), and [TODO.md](TODO.md) for the assessment summary, AI audit trail, and completion checklist.

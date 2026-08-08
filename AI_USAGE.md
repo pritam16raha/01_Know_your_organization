@@ -4,7 +4,8 @@
 
 - Assistant: OpenAI Codex
 - Timebox started: 2026-08-08 12:40:21 IST
-- Final implementation and real LAN-browser verification completed: 2026-08-08 13:38:26 IST (58 minutes)
+- Required implementation and real LAN-browser verification completed: 2026-08-08 13:38:26 IST (58 minutes)
+- Post-timebox hosted demo-credential correction verified: 2026-08-08 15:14 IST
 - Candidate retained final responsibility for architecture, security, and verification.
 
 ## Important prompts
@@ -25,6 +26,10 @@ This refinement removed the earlier ambiguity about whether identities already e
 
 After reviewing the login page, the candidate requested two demo-user tabs above the form so an evaluator can select either tenant, populate its generated email/password, and then sign in without searching local files. This changed the earlier decision to keep demo passwords entirely outside the browser; the implementation limits the behavior to throwaway credentials loaded from an ignored local file and documents that it must not be used for production identities.
 
+### Hosted demo-access correction
+
+The candidate reported that the quick-access tabs were present locally but absent from the Vercel deployment. Inspection showed that the server-rendered login page read only the ignored local credential file, which is correctly excluded from deployments. The candidate added four server-only Vercel variables for the two throwaway users and requested the deployment flow be completed. The loader was changed to prefer a complete environment configuration, fall back to the local file only when no demo variables are present, and fail closed when the environment is partial.
+
 ## Suggestions and decisions
 
 | Suggestion | Decision | Reason / verification plan |
@@ -38,11 +43,12 @@ After reviewing the login page, the candidate requested two demo-user tabs above
 | Allow independent account and organization foreign keys | Rejected | A composite `(organization_id, account_id)` foreign key makes tenant inconsistency impossible at the relational layer. |
 | Treat Next.js Proxy as the authorization boundary | Rejected | Version-local Next.js guidance says Proxy is appropriate only for optimistic checks; every route authenticates again and PostgreSQL RLS remains authoritative. |
 | Expose generated demo passwords in documentation | Rejected | Random passwords remain in a local ignored file, while setup remains reproducible through the seed command. |
-| Add one-click demo identity selection to the login form | Accepted after candidate request | The server reads the ignored generated credential file at request time and passes only the two throwaway demo identities to the login UI; no credential is committed. |
+| Add one-click demo identity selection to the login form | Accepted after candidate request | The server reads complete server-side deployment variables first and otherwise reads the ignored generated credential file; it passes only the two throwaway demo identities to the login UI and commits no credential. |
+| Commit demo passwords so Vercel can render the tabs | Rejected | Hosted evaluator credentials are supplied through server-side environment variables; no password is added to source control. |
 
 ## Verification of AI output
 
-Verification completed so far: the Supabase database linter returned no findings; both demo users authenticated; the tenant-A activity read and create succeeded; results were newest-first; a retry returned the same entry with `was_duplicate: true`; and tenant A's read and create attempts against tenant B's account both failed with PostgreSQL code `42501`. TypeScript, ESLint, and the production build pass. End-to-end HTTP checks confirmed both demo selectors rendered and returned `401` unauthenticated, `200` read, `201` create, `200` idempotent retry with the same entry ID, and `403` for cross-tenant read and write.
+Verification completed so far: the Supabase database linter returned no findings; both demo users authenticated; the tenant-A activity read and create succeeded; results were newest-first; a retry returned the same entry with `was_duplicate: true`; and tenant A's read and create attempts against tenant B's account both failed with PostgreSQL code `42501`. TypeScript, ESLint, and the production build pass. End-to-end HTTP checks confirmed both demo selectors rendered and returned `401` unauthenticated, `200` read, `201` create, `200` idempotent retry with the same entry ID, and `403` for cross-tenant read and write. A production-server check with sentinel deployment variables confirmed environment credentials take precedence over the local file and render both tabs; a partial-variable check confirmed the tabs remain hidden without leaking local fallback credentials.
 
 ## Corrections
 
@@ -53,3 +59,5 @@ The first generated React data-loading helper changed loading state synchronousl
 Manual testing through the candidate's LAN URL exposed another incorrect assumption: `crypto.randomUUID()` is not available to browser JavaScript on an insecure non-localhost origin. Because key creation occurred before the guarded request, submission stopped without a network call or feedback. The corrected implementation uses `randomUUID()` when available, falls back to RFC 4122 version/variant bits over `crypto.getRandomValues()`, resets the key when the draft changes, and generates it inside the handled submission path so any remaining failure produces visible feedback.
 
 When the candidate still observed the old behavior, code-level validation alone was insufficient. Process inspection showed port 3000 was served by a `next start` process created before the corrected production build. Unlike the development server, it could not hot-reload the fix. The stale process was replaced, and a Playwright Core test using the installed Edge browser verified the complete insecure-LAN workflow: demo selection, authentication, Globex submission, visible green feedback, cleared textarea, and one rendered note.
+
+The first quick-access implementation assumed the ignored local credential file would exist wherever the application ran. Vercel correctly deployed neither that file nor its secrets, so the tabs disappeared. The corrected server loader accepts all four explicitly configured deployment variables, gives them precedence over the development file, and disables quick access when only part of the environment is configured. Complete and partial configurations were both exercised against an optimized production server before commit.

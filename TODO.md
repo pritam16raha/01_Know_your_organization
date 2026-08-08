@@ -2,7 +2,9 @@
 
 Timebox start: **2026-08-08 12:40:21 IST**
 
-Final implementation and real LAN-browser verification completed: **2026-08-08 13:38:26 IST** (58 minutes).
+Required implementation and real LAN-browser verification completed: **2026-08-08 13:38:26 IST** (58 minutes).
+
+Post-timebox hosted demo-credential correction verified: **2026-08-08 15:14 IST**.
 
 ## Planning and repository
 
@@ -37,6 +39,7 @@ Final implementation and real LAN-browser verification completed: **2026-08-08 1
 - [x] Integrate the supplied visual design as Next.js components.
 - [x] Implement real email/password sign-in and sign-out.
 - [x] Add two quick-select demo-user tabs that populate the login form.
+- [x] Support server-side demo credentials in hosted deployments with a local-file fallback.
 - [x] Add protected-route session refresh.
 - [x] Support account selection.
 - [x] Show loading, empty, success, and error states.
