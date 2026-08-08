@@ -1,0 +1,7 @@
+Frontend/.env
+Frontend/.env.local
+Frontend/.next/
+Frontend/node_modules/
+Frontend/supabase/.temp/
+*.log
+
