@@ -2,7 +2,7 @@
 
 Timebox start: **2026-08-08 12:40:21 IST**
 
-Required implementation and submission artifacts completed: **2026-08-08 13:08:22 IST** (28 minutes).
+Final implementation and requested demo-login enhancement completed: **2026-08-08 13:14:19 IST** (34 minutes).
 
 ## Planning and repository
 
@@ -36,6 +36,7 @@ Required implementation and submission artifacts completed: **2026-08-08 13:08:2
 
 - [x] Integrate the supplied visual design as Next.js components.
 - [x] Implement real email/password sign-in and sign-out.
+- [x] Add two quick-select demo-user tabs that populate the login form.
 - [x] Add protected-route session refresh.
 - [x] Support account selection.
 - [x] Show loading, empty, success, and error states.

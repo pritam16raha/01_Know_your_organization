@@ -4,7 +4,7 @@
 
 - Assistant: OpenAI Codex
 - Timebox started: 2026-08-08 12:40:21 IST
-- Implementation and required submission artifacts completed: 2026-08-08 13:08:22 IST (28 minutes)
+- Final implementation and requested demo-login enhancement completed: 2026-08-08 13:14:19 IST (34 minutes)
 - Candidate retained final responsibility for architecture, security, and verification.
 
 ## Important prompts
@@ -21,6 +21,10 @@ The candidate clarified that the two-hour timer began at implementation time, th
 
 This refinement removed the earlier ambiguity about whether identities already existed and established the implementation start time.
 
+### Evaluator usability refinement
+
+After reviewing the login page, the candidate requested two demo-user tabs above the form so an evaluator can select either tenant, populate its generated email/password, and then sign in without searching local files. This changed the earlier decision to keep demo passwords entirely outside the browser; the implementation limits the behavior to throwaway credentials loaded from an ignored local file and documents that it must not be used for production identities.
+
 ## Suggestions and decisions
 
 | Suggestion | Decision | Reason / verification plan |
@@ -34,10 +38,11 @@ This refinement removed the earlier ambiguity about whether identities already e
 | Allow independent account and organization foreign keys | Rejected | A composite `(organization_id, account_id)` foreign key makes tenant inconsistency impossible at the relational layer. |
 | Treat Next.js Proxy as the authorization boundary | Rejected | Version-local Next.js guidance says Proxy is appropriate only for optimistic checks; every route authenticates again and PostgreSQL RLS remains authoritative. |
 | Expose generated demo passwords in documentation | Rejected | Random passwords remain in a local ignored file, while setup remains reproducible through the seed command. |
+| Add one-click demo identity selection to the login form | Accepted after candidate request | The server reads the ignored generated credential file at request time and passes only the two throwaway demo identities to the login UI; no credential is committed. |
 
 ## Verification of AI output
 
-Verification completed so far: the Supabase database linter returned no findings; both demo users authenticated; the tenant-A activity read and create succeeded; results were newest-first; a retry returned the same entry with `was_duplicate: true`; and tenant A's read and create attempts against tenant B's account both failed with PostgreSQL code `42501`. TypeScript, ESLint, and the production build pass. End-to-end HTTP checks returned `401` unauthenticated, `200` read, `201` create, `200` idempotent retry with the same entry ID, and `403` for cross-tenant read and write.
+Verification completed so far: the Supabase database linter returned no findings; both demo users authenticated; the tenant-A activity read and create succeeded; results were newest-first; a retry returned the same entry with `was_duplicate: true`; and tenant A's read and create attempts against tenant B's account both failed with PostgreSQL code `42501`. TypeScript, ESLint, and the production build pass. End-to-end HTTP checks confirmed both demo selectors rendered and returned `401` unauthenticated, `200` read, `201` create, `200` idempotent retry with the same entry ID, and `403` for cross-tenant read and write.
 
 ## Corrections
 

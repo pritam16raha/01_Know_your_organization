@@ -49,6 +49,14 @@ async function api(path, cookie, init = {}) {
 const unauthenticated = await api("/api/workspace");
 assert.equal(unauthenticated.response.status, 401);
 
+const loginPage = await fetch(`${baseUrl}/login`);
+const loginMarkup = await loginPage.text();
+assert.equal(loginPage.status, 200);
+assert.ok(loginMarkup.includes("Organization A"));
+assert.ok(loginMarkup.includes("Organization B"));
+assert.ok(loginMarkup.includes("Northstar Labs"));
+assert.ok(loginMarkup.includes("Rival Systems"));
+
 const cookieA = await login(credentials.organizationA);
 const cookieB = await login(credentials.organizationB);
 const workspaceA = await api("/api/workspace", cookieA);
@@ -95,6 +103,7 @@ assert.equal(forbiddenWrite.response.status, 403);
 console.log(
   JSON.stringify(
     {
+      demoIdentityTabsRendered: true,
       unauthenticatedStatus: unauthenticated.response.status,
       successfulReadStatus: read.response.status,
       successfulCreateStatus: create.response.status,
@@ -107,4 +116,3 @@ console.log(
     2,
   ),
 );
-

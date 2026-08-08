@@ -5,6 +5,7 @@ A focused Next.js and Supabase vertical slice for viewing account activity and a
 ## Completed scope
 
 - Email/password authentication through Supabase Auth with HTTP-only session cookies.
+- Two quick-select demo-user tabs that fill the corresponding email and password for the reviewer.
 - Protected Next.js 16 application route using `proxy.ts` for session refresh and optimistic redirects.
 - Account selection and newest-first activity feed.
 - Validated note creation with database-backed idempotency.
@@ -69,7 +70,7 @@ The application never accepts `organization_id` from the browser. It accepts an 
    npm run seed:demo
    ```
 
-   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. Random demo passwords are saved only to ignored `Frontend/.demo-credentials.json`.
+   The bootstrap uses Supabase's Auth Admin API, obtains the service key transiently through the authenticated Management API, and never writes that key to disk. Random demo passwords are saved only to ignored `Frontend/.demo-credentials.json`. When that file exists, the login page exposes these two throwaway identities to the browser solely for the requested one-click evaluator workflow; this convenience must not be enabled for production identities.
 
 5. Start the application:
 
@@ -131,6 +132,7 @@ Observed evidence on 2026-08-08:
 
 | Check | Result |
 | --- | --- |
+| Demo identity selectors | Both organization tabs rendered |
 | Unauthenticated workspace | HTTP `401` |
 | Authenticated activity read | HTTP `200` |
 | First create | HTTP `201` |
@@ -146,7 +148,7 @@ One important failure mode is an unexpected rise in authorization denials caused
 
 ## Timebox and trade-offs
 
-Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice and submission artifacts were completed at **13:08:22 IST** (28 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
+Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, and requested demo-login enhancement were completed at **13:14:19 IST** (34 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
 
 Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
 
