@@ -110,6 +110,7 @@ Static checks:
 ```bash
 npm run typecheck
 npm run lint
+npm run verify:client
 npm run build
 ```
 
@@ -133,6 +134,7 @@ Observed evidence on 2026-08-08:
 | Check | Result |
 | --- | --- |
 | Demo identity selectors | Both organization tabs rendered |
+| Native and insecure-origin idempotency UUID paths | Passed |
 | Unauthenticated workspace | HTTP `401` |
 | Authenticated activity read | HTTP `200` |
 | First create | HTTP `201` |
@@ -148,7 +150,7 @@ One important failure mode is an unexpected rise in authorization denials caused
 
 ## Timebox and trade-offs
 
-Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, and requested demo-login enhancement were completed at **13:14:19 IST** (34 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
+Implementation began at **2026-08-08 12:40:21 IST**. The required vertical slice, submission artifacts, requested demo-login enhancement, and LAN-origin correction were completed at **13:28:43 IST** (48 minutes), inside the two-hour limit. Time was prioritized toward database enforcement and evidence rather than unrelated features or visual polish.
 
 Not included: pagination, tenant switching, role administration, password recovery, CI deployment, screenshots, and production telemetry wiring. These are intentionally outside the requested slice. With another two hours, I would add Playwright browser coverage, generated Supabase TypeScript types, pagination, request correlation IDs, and CI checks.
 

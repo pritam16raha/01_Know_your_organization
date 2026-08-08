@@ -4,7 +4,7 @@
 
 - Assistant: OpenAI Codex
 - Timebox started: 2026-08-08 12:40:21 IST
-- Final implementation and requested demo-login enhancement completed: 2026-08-08 13:14:19 IST (34 minutes)
+- Final implementation, demo-login enhancement, and LAN-origin correction completed: 2026-08-08 13:28:43 IST (48 minutes)
 - Candidate retained final responsibility for architecture, security, and verification.
 
 ## Important prompts
@@ -49,3 +49,5 @@ Verification completed so far: the Supabase database linter returned no findings
 The initial tooling plan assumed the latest Supabase CLI could complete `supabase link`. CLI 2.112.0 rejected a valid management API timestamp while parsing project API-key metadata. An attempted older CLI was also rejected because its configuration format was obsolete and its dependency chain emitted a security warning, so it was not used. The corrected approach retained CLI 2.112.0 and used the documented IPv4 session-pooler connection with `supabase db push --db-url`; the database password remained local and was percent-encoded in process memory.
 
 The first generated React data-loading helper changed loading state synchronously when invoked from an effect. The React 19 lint rule correctly rejected this because it can cause cascading renders. The code was changed so effect-triggered helpers update state only after asynchronous I/O; event handlers own immediate loading transitions for retries and account changes.
+
+Manual testing through the candidate's LAN URL exposed another incorrect assumption: `crypto.randomUUID()` is not available to browser JavaScript on an insecure non-localhost origin. Because key creation occurred before the guarded request, submission stopped without a network call or feedback. The corrected implementation uses `randomUUID()` when available, falls back to RFC 4122 version/variant bits over `crypto.getRandomValues()`, resets the key when the draft changes, and generates it inside the handled submission path so any remaining failure produces visible feedback.

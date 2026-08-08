@@ -2,7 +2,7 @@
 
 Timebox start: **2026-08-08 12:40:21 IST**
 
-Final implementation and requested demo-login enhancement completed: **2026-08-08 13:14:19 IST** (34 minutes).
+Final implementation, demo-login enhancement, and LAN-origin correction completed: **2026-08-08 13:28:43 IST** (48 minutes).
 
 ## Planning and repository
 
@@ -41,6 +41,7 @@ Final implementation and requested demo-login enhancement completed: **2026-08-0
 - [x] Support account selection.
 - [x] Show loading, empty, success, and error states.
 - [x] Disable duplicate submissions while a request is active.
+- [x] Support idempotency-key generation from insecure LAN development origins.
 
 ## Verification and submission
 

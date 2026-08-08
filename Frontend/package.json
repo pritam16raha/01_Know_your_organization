@@ -1,6 +1,7 @@
 {
   "name": "secure-activity-feed",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "seed:demo": "node scripts/seed-demo.mjs",
     "verify:integration": "node scripts/verify-supabase.mjs",
-    "verify:http": "node scripts/verify-http.mjs"
+    "verify:http": "node scripts/verify-http.mjs",
+    "verify:client": "node scripts/verify-client-idempotency.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createIdempotencyKey } from "@/lib/idempotency-key";
 import type {
   ActivityEntry,
   ActivityResponse,
@@ -148,7 +149,7 @@ export function ActivityDashboard() {
 
   function updateDraft(value: string) {
     setDraft(value);
-    setIdempotencyKey(crypto.randomUUID());
+    setIdempotencyKey("");
     setFeedback(null);
   }
 
@@ -160,12 +161,12 @@ export function ActivityDashboard() {
       return;
     }
 
-    const requestKey = idempotencyKey || crypto.randomUUID();
-    setIdempotencyKey(requestKey);
     setIsSubmitting(true);
     setFeedback(null);
 
     try {
+      const requestKey = idempotencyKey || createIdempotencyKey();
+      setIdempotencyKey(requestKey);
       const data = await responseJson<CreateNoteResponse>(
         await fetch(`/api/accounts/${selectedAccountId}/activities`, {
           method: "POST",
@@ -179,7 +180,7 @@ export function ActivityDashboard() {
         ...current.filter((entry) => entry.id !== data.activity.id),
       ]);
       setDraft("");
-      setIdempotencyKey(crypto.randomUUID());
+      setIdempotencyKey("");
       setFeedback({
         type: "success",
         message: data.wasDuplicate
