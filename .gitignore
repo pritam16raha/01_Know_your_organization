@@ -1,7 +1,7 @@
 Frontend/.env
 Frontend/.env.local
+Frontend/.demo-credentials.json
 Frontend/.next/
 Frontend/node_modules/
 Frontend/supabase/.temp/
 *.log
-

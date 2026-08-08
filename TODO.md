@@ -13,14 +13,14 @@ Timebox start: **2026-08-08 12:40:21 IST**
 
 ## Data, authentication, and tenant security
 
-- [ ] Add Supabase CLI project configuration and database migration.
-- [ ] Create the minimum organizations, memberships, accounts, and activity schema.
-- [ ] Add tenant-consistent foreign keys and database validation.
-- [ ] Enable and test RLS on every tenant-owned table.
-- [ ] Derive organization and author from `auth.uid()`, never browser input.
-- [ ] Keep elevated credentials outside application requests and version control.
-- [ ] Create two real demo Auth users in different organizations.
-- [ ] Seed accounts and activities for positive and negative tests.
+- [x] Add Supabase CLI project configuration and database migration.
+- [x] Create the minimum organizations, memberships, accounts, and activity schema.
+- [x] Add tenant-consistent foreign keys and database validation.
+- [x] Enable and live-test RLS on every tenant-owned table.
+- [x] Derive organization and author from `auth.uid()`, never browser input.
+- [x] Keep elevated credentials outside application requests and version control.
+- [x] Create two real demo Auth users in different organizations.
+- [x] Seed accounts and activities for positive and negative tests.
 
 ## Backend operations
 
@@ -41,10 +41,10 @@ Timebox start: **2026-08-08 12:40:21 IST**
 
 ## Verification and submission
 
-- [ ] Demonstrate successful read and create.
-- [ ] Demonstrate Organization A cannot read or write Organization B's account.
-- [ ] Demonstrate a retried create does not create a duplicate.
-- [ ] Add at least one automated test.
+- [x] Demonstrate successful read and create.
+- [x] Demonstrate Organization A cannot read or write Organization B's account.
+- [x] Demonstrate a retried create does not create a duplicate.
+- [x] Add an automated live Supabase integration test.
 - [ ] Run lint, type checking, and production build.
 - [ ] Document a production failure mode and detection strategy.
 - [ ] Complete README setup/schema/timebox instructions.
