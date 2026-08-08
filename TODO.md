@@ -56,6 +56,6 @@ Post-timebox hosted demo-credential correction verified: **2026-08-08 15:14 IST*
 - [x] Run lint, type checking, and production build.
 - [x] Document a production failure mode and detection strategy.
 - [x] Complete README setup/schema/timebox instructions.
-- [x] Complete the 1-3 page Markdown report.
+- [x] Complete the email-ready 1-3 page report with a manual-verification appendix and evidence checklist.
 - [x] Finalize `AI_USAGE.md`, including corrections and verification.
 - [x] Record incomplete work and next steps honestly.

@@ -1,53 +1,315 @@
-# Engineering Report: Secure Multi-Tenant Activity Feed
+# Secure Multi-Tenant Activity Feed - Submission Report
 
-## Summary
+- **Candidate:** Pritam Raha
+- **Stack:** Next.js 16, TypeScript, Supabase Auth, PostgreSQL, Row Level Security
+- **Repository:** <https://github.com/pritam16raha/01_Know_your_organization>
+- **Live application:** <https://01-know-your-organization.vercel.app/login>
 
-This submission implements the requested activity-feed vertical slice with Next.js 16, TypeScript, Supabase Auth, and PostgreSQL. An evaluator can select either seeded tenant identity to fill the login form. A signed-in user can then select one of their organization's accounts, read activity notes newest first, and add a note. The UI includes loading, empty, success, validation, authorization, and server-error behavior. Create retries are idempotent.
+## 1. Summary
 
-The design treats tenant isolation as a database invariant rather than a UI convention. The client never sends an organization identifier. Next.js authenticates each operation using Supabase session cookies, and the database independently derives access from `auth.uid()` and `memberships` under RLS.
+This submission delivers the requested multi-tenant activity-feed vertical slice. A reviewer can select either of two seeded demo identities, sign in through real Supabase Auth, view only that organization's accounts, read account notes newest first, and add a note. The UI includes loading, empty, success, validation, authorization, and server-error feedback.
 
-## Architecture and data design
+Tenant isolation is enforced in PostgreSQL rather than being inferred from the dropdown or trusted browser data. Note creation is also duplicate-safe: retrying the same intended operation returns the original activity instead of inserting another row.
 
-The frontend is a Next.js App Router application. Next.js `proxy.ts` refreshes Supabase sessions and performs only optimistic page redirects; every route handler repeats authoritative authentication before accessing data. Route handlers validate input with Zod and call three narrow PostgreSQL functions: workspace/account discovery, newest-first activity reads, and duplicate-safe note creation.
+## 2. Architecture
 
-The schema is intentionally small:
+```text
+Browser
+  -> Next.js route handlers (cookie session + Zod validation)
+    -> Supabase Data API / PostgreSQL RPCs (authenticated user's JWT)
+      -> RLS membership policies + tenant-consistent constraints
+        -> organizations / memberships / accounts / activity_entries
+```
 
-- `organizations` owns tenant identity.
-- `memberships` links real `auth.users` identities to organizations.
+Next.js provides the frontend and the required backend-for-frontend operations. `proxy.ts` refreshes the Supabase session and performs only optimistic navigation checks; each route handler authenticates again before accessing data. The route handlers expose workspace discovery, newest-first activity reads, and validated note creation.
+
+The data model is intentionally small:
+
+- `organizations` is the tenant root.
+- `memberships` associates each real `auth.users` identity with one organization for this assessment.
 - `accounts` belongs to an organization.
-- `activity_entries` records the account, derived organization, derived author, note, creation time, and idempotency key.
+- `activity_entries` stores the account, derived organization, derived author, body, timestamp, and idempotency key.
 
-Composite foreign keys ensure an activity cannot claim an organization different from its account or author membership. The application role can insert only `account_id`, `body`, and `idempotency_key`. A trigger looks up the visible account and overwrites organization and author from authenticated database context. This remains safe even if a caller bypasses the UI and calls the Data API directly.
+Northstar Labs owns Acme Corporation and Globex Retail. Rival Systems owns Rival Confidential Account. Pritam Raha belongs to Northstar; Alex Rival belongs to Rival Systems. The account dropdown therefore shows two accounts to Pritam and one to Alex.
 
-## Security approach
+## 3. Security approach
 
-RLS is enabled on all four application tables. Selection policies call a non-recursive, security-definer membership helper based on `auth.uid()`. The helper has an empty `search_path`, explicit schema qualification, and narrowly granted execution. Read and create functions run as the invoker, so they cannot bypass RLS.
+- RLS is enabled on every application table. Policies resolve membership from `auth.uid()`.
+- The browser never supplies or selects an `organization_id`. It sends only the chosen account ID, note body, and idempotency key.
+- PostgreSQL derives `organization_id` and `created_by` from the authenticated user and visible account. Insert grants prevent callers from setting protected columns.
+- Composite foreign keys prevent an activity from claiming a tenant different from its account or author membership.
+- Missing and cross-tenant account IDs intentionally return the same message, limiting account enumeration.
+- Normal requests use the authenticated user's JWT and publishable Supabase key. A service-role key is obtained transiently only by the local seed script and is never stored in the application or repository.
+- Note input is trimmed and validated at both the TypeScript and PostgreSQL boundaries, with a maximum length of 2,000 characters.
+- A unique `(organization_id, idempotency_key)` constraint is the concurrency-safe duplicate boundary. Reusing a key for a different request is rejected.
+- Quick-access credentials are throwaway evaluator identities. Hosted values come from server-side environment variables, with the ignored local credential file used only for local development. A partial hosted configuration fails closed.
 
-An inaccessible account and a missing account intentionally produce the same error, reducing account enumeration. The normal application never receives or uses a service-role key. Elevated access exists only in the local demo bootstrap: it retrieves the key transiently through the authenticated Supabase Management API, creates users via the supported Auth Admin API, seeds their memberships/accounts, and discards the key. The requested quick-login tabs expose only throwaway demo passwords loaded from complete server-side deployment variables or, locally, an ignored credential file. A partial deployment configuration fails closed; this evaluator convenience must not be used with production identities.
+## 4. Tests and evidence
 
-Note creation trims and validates 1–2,000 characters in both TypeScript and PostgreSQL. A caller-generated UUID represents the intended operation. PostgreSQL enforces one row per `(organization_id, idempotency_key)`. A retry with the same account, author, and body returns the original row; reuse for different request content is rejected.
+Automated verification exercises the database, HTTP, client, and browser layers:
 
-## Tests and evidence
+```bash
+cd Frontend
+npm run typecheck
+npm run lint
+npm run build
+npm run verify:integration
+npm run verify:client
+```
 
-Two real Auth users were created in Northstar Labs and Rival Systems. Northstar owns Acme Corporation and Globex Retail; Rival owns a confidential account.
+The HTTP and real-browser checks run against a started production server. `README.md` documents the required port and `TEST_BASE_URL` setup for `npm run verify:http` and `npm run verify:browser:lan`.
 
-The live Supabase integration test verified authentication for both users, correct workspace filtering, a seeded activity read, newest-first ordering, duplicate-safe creation, and direct cross-tenant denial. The Supabase database linter reported no findings.
+Observed results:
 
-The HTTP integration test exercised the deployed Next.js boundary and observed:
+| Scenario | Expected and observed result |
+| --- | --- |
+| Unauthenticated workspace | HTTP `401` |
+| Authorized activity read | HTTP `200`, newest first |
+| First note creation | HTTP `201`, `wasDuplicate: false` |
+| Identical retry | HTTP `200`, same activity ID, `wasDuplicate: true` |
+| Northstar reads Rival account | HTTP `403`; raw PostgreSQL `42501` |
+| Northstar writes Rival account | HTTP `403`; raw PostgreSQL `42501`; no row created |
+| Database lint | No findings |
+| TypeScript, ESLint, production build | Passed |
+| Real Edge browser on insecure LAN origin | Login, Globex create, visible success, cleared form, and one rendered note passed |
+| Hosted demo configuration | Complete environment renders both tabs; partial environment fails closed |
 
-- unauthenticated workspace: `401`;
-- successful read: `200`;
-- first create: `201`;
-- identical retry: `200`, the same activity ID, and `wasDuplicate: true`;
-- tenant-A read of tenant-B account: `403`;
-- tenant-A write to tenant-B account: `403`.
+The automated checks are reproducible in `Frontend/scripts/`. Appendix A below provides evaluator-friendly manual checks without adding a cross-tenant option to the UI.
 
-Direct RPC denials returned PostgreSQL code `42501`. The client idempotency test covers both native secure-context UUID generation and the cryptographic fallback required by an HTTP LAN origin. A real Edge browser test against `http://192.168.0.111:3000` verifies demo selection, authentication, Globex creation, visible success feedback, a cleared textarea, and exactly one rendered note. Production-server checks also verify that a complete hosted demo environment renders both identities and overrides the local file, while a partial environment fails closed. Type checking, ESLint, and the optimized Next.js production build all pass.
+## 5. Trade-offs, incomplete work, and another two hours
 
-## Trade-offs, operations, and remaining work
+The mandatory vertical slice is complete. The assessment models one active organization per user, so `memberships.user_id` is unique. A larger product that allows one identity in multiple organizations would require an explicit organization selector backed by signed or server-maintained active-tenant context.
 
-The assessment models one active organization per identity. The database therefore has a unique membership constraint on `user_id`. A production system requiring multi-organization membership should add an explicit organization switcher and a server-maintained active-tenant context rather than infer a tenant from arbitrary client input.
+Intentionally incomplete work includes pagination, tenant switching, role administration, password recovery, generated database types, CI deployment checks, request tracing, broader browser coverage, and production telemetry. Screenshots and a short walkthrough video are being supplied separately as submission evidence rather than stored in the application repository.
 
-For production, I would monitor authentication and authorization failure ratios (`401`, `403`, and PostgreSQL `42501`) by route and release. A sustained increase could identify expired-session problems, membership-sync failures, regressions, or account-ID probing. Logs must omit note bodies, credentials, cookies, tokens, and idempotency keys.
+With another two hours, I would prioritize:
 
-The required feature, submission artifacts, requested local demo-login enhancement, LAN-origin correction, and real-browser regression test were completed in 58 minutes, from 12:40:21 to 13:38:26 IST. A post-timebox hosted-configuration correction was verified at 15:14 IST after Vercel revealed that the ignored local credential file was unavailable by design. Optional screenshots and recording were not produced. Pagination, broader browser coverage, generated database types, password recovery, CI, request tracing, and real telemetry wiring remain future improvements. These were deliberately deferred to keep the submitted slice small, secure, and verifiable.
+1. Playwright coverage for both tenants, validation errors, session expiry, and mobile layouts.
+2. Generated Supabase TypeScript types plus CI gates for lint, type checking, build, and integration tests.
+3. Pagination and request correlation IDs.
+4. Structured monitoring of `401`, `403`, and PostgreSQL `42501` ratios by route and release, excluding credentials, cookies, tokens, note bodies, and idempotency keys.
+
+The required implementation and real-browser verification were completed from **12:40:21 to 13:38:26 IST (58 minutes)**. A separately recorded post-timebox correction at **15:14 IST** added hosted demo-environment support after deployment exposed the local-file assumption. The complete AI collaboration record is in [`AI_USAGE.md`](AI_USAGE.md).
+
+## 6. Suggested accompanying evidence
+
+Attach these separately or embed selected images before exporting this report to PDF:
+
+1. Login page showing both Quick Demo Access tabs.
+2. Pritam's dropdown showing Acme Corporation and Globex Retail.
+3. Alex's dropdown showing only Rival Confidential Account.
+4. Successful note creation with visible success feedback.
+5. DevTools output for cross-tenant HTTP `403` and the identical-retry comparison.
+6. Supabase SQL Editor output showing raw PostgreSQL `42501`.
+7. A short video showing both tenant views, a successful note, a denied tampered request, and an identical retry.
+
+---
+
+# Appendix A - Manual security and idempotency verification
+
+Unauthorized accounts are intentionally absent from the dropdown. This is expected UI behavior, not the security boundary. Use the browser Console to simulate a tampered request and confirm that the API and database still deny access.
+
+## A.1 Cross-tenant read
+
+Sign in as **Pritam Raha**, open **DevTools -> Console**, and run:
+
+```javascript
+const rivalAccountId = "30000000-0000-4000-8000-000000000003";
+
+const response = await fetch(
+  `/api/accounts/${rivalAccountId}/activities`,
+  { credentials: "same-origin" }
+);
+
+console.log("Status:", response.status);
+console.log("Response:", await response.json());
+```
+
+Expected:
+
+```text
+Status: 403
+Response: {
+  error: "Account not found or is not accessible."
+}
+```
+
+Pritam belongs to Northstar Labs, while this account belongs to Rival Systems.
+
+## A.2 Cross-tenant create
+
+While still signed in as **Pritam Raha**, run:
+
+```javascript
+const rivalAccountId = "30000000-0000-4000-8000-000000000003";
+
+const response = await fetch(
+  `/api/accounts/${rivalAccountId}/activities`,
+  {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      body: "This cross-tenant note must be rejected.",
+      idempotencyKey: "f0000000-0000-4000-8000-000000000001"
+    })
+  }
+);
+
+console.log("Status:", response.status);
+console.log("Response:", await response.json());
+```
+
+Expected:
+
+```text
+Status: 403
+Response: {
+  error: "Account not found or is not accessible."
+}
+```
+
+No note will be created.
+
+## A.3 Identical retry
+
+While signed in as **Pritam Raha**, use Globex Retail because it belongs to Northstar Labs:
+
+```javascript
+const globexAccountId = "30000000-0000-4000-8000-000000000002";
+
+const payload = {
+  body: "Manual idempotency test.",
+  idempotencyKey: "7f30e0c8-f741-4dde-8cce-00b5f1549a01"
+};
+
+async function createNote() {
+  const response = await fetch(
+    `/api/accounts/${globexAccountId}/activities`,
+    {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+  return {
+    status: response.status,
+    data: await response.json()
+  };
+}
+
+const first = await createNote();
+const retry = await createNote();
+
+console.log("First request:", first);
+console.log("Retry:", retry);
+console.log(
+  "Same activity ID:",
+  first.data.activity.id === retry.data.activity.id
+);
+```
+
+Expected first request:
+
+```text
+status: 201
+wasDuplicate: false
+```
+
+Expected retry:
+
+```text
+status: 200
+wasDuplicate: true
+Same activity ID: true
+```
+
+The two `activity.id` values must be identical. If the complete test is repeated later, change the idempotency key; otherwise the first request will also be recognized as a retry.
+
+## A.4 Raw PostgreSQL `42501`
+
+The Next.js API intentionally maps database `42501` to HTTP `403` so internal database details are not exposed to the frontend.
+
+Open the **Supabase SQL Editor** and run the following cross-tenant read test:
+
+```sql
+begin;
+
+select set_config(
+  'request.jwt.claim.sub',
+  (
+    select id::text
+    from auth.users
+    where email = 'pritam@northstar.test'
+  ),
+  true
+);
+
+set local role authenticated;
+
+select *
+from public.get_account_activity(
+  '30000000-0000-4000-8000-000000000003'
+);
+
+rollback;
+```
+
+Expected:
+
+```text
+ERROR: 42501: Account not found or is not accessible.
+```
+
+Then run the cross-tenant create test:
+
+```sql
+begin;
+
+select set_config(
+  'request.jwt.claim.sub',
+  (
+    select id::text
+    from auth.users
+    where email = 'pritam@northstar.test'
+  ),
+  true
+);
+
+set local role authenticated;
+
+select *
+from public.create_account_note(
+  '30000000-0000-4000-8000-000000000003',
+  'This must be denied.',
+  'f0000000-0000-4000-8000-000000000002'
+);
+
+rollback;
+```
+
+Expected:
+
+```text
+ERROR: 42501: Account not found or is not accessible.
+```
+
+If the SQL Editor stops at the expected error before executing `rollback`, run `rollback;` separately before the next test.
+
+The two statuses represent the same authorization denial at different layers:
+
+```text
+PostgreSQL/RLS 42501
+        |
+        v
+Next.js error mapping
+        |
+        v
+HTTP 403
+```
