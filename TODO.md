@@ -9,7 +9,7 @@ Timebox start: **2026-08-08 12:40:21 IST**
 - [x] Confirm the Supabase environment keys without exposing values.
 - [x] Record the implementation start time.
 - [x] Scaffold the Next.js/TypeScript application.
-- [ ] Commit each logical milestone.
+- [x] Commit each logical milestone.
 
 ## Data, authentication, and tenant security
 
@@ -46,8 +46,8 @@ Timebox start: **2026-08-08 12:40:21 IST**
 - [x] Demonstrate a retried create does not create a duplicate.
 - [x] Add an automated live Supabase integration test.
 - [x] Run lint, type checking, and production build.
-- [ ] Document a production failure mode and detection strategy.
-- [ ] Complete README setup/schema/timebox instructions.
-- [ ] Complete the 1-3 page Markdown report.
-- [ ] Finalize `AI_USAGE.md`, including any corrections and verification.
-- [ ] Record incomplete work and next steps honestly.
+- [x] Document a production failure mode and detection strategy.
+- [x] Complete README setup/schema/timebox instructions.
+- [x] Complete the 1-3 page Markdown report.
+- [x] Finalize `AI_USAGE.md`, including corrections and verification.
+- [x] Record incomplete work and next steps honestly.

@@ -31,6 +31,8 @@ This refinement removed the earlier ambiguity about whether identities already e
 | Use a client-generated UUID idempotency key backed by a unique constraint | Accepted | The database becomes the concurrency-safe duplicate boundary. |
 | Insert demo identities directly into `auth.users` with SQL | Rejected | Real users will be created through the supported Supabase Auth Admin API; the temporary service key is fetched at runtime and never persisted. |
 | Allow independent account and organization foreign keys | Rejected | A composite `(organization_id, account_id)` foreign key makes tenant inconsistency impossible at the relational layer. |
+| Treat Next.js Proxy as the authorization boundary | Rejected | Version-local Next.js guidance says Proxy is appropriate only for optimistic checks; every route authenticates again and PostgreSQL RLS remains authoritative. |
+| Expose generated demo passwords in documentation | Rejected | Random passwords remain in a local ignored file, while setup remains reproducible through the seed command. |
 
 ## Verification of AI output
 
