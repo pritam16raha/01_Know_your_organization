@@ -64,6 +64,10 @@ The candidate asked for the finalized Markdown report to be converted into a PDF
 
 The candidate asked whether the ChatGPT shared-conversation URL should be included in the emailed report to demonstrate that requirements and architecture were discussed before application code was written and that the standalone HTML prototype intentionally reduced UI implementation time. The link was included as supporting process evidence after a read-only check confirmed that the current shared snapshot did not contain either supplied demo-password fragment or the local Windows project path. The candidate was warned not to update the snapshot after later messages introduced demo credentials, because shared snapshots are publicly accessible to anyone with the link.
 
+### Copy-ready verification appendix refinement
+
+The candidate requested copy controls on the PDF test snippets so the evaluator could paste them directly into DevTools and the Supabase SQL Editor. A PDF button would not behave consistently across viewers, so the commands were retained as selectable PDF text and each test received a deep link to the GitHub-rendered Markdown block, where a native copy button is available. This preserves email-attachment readability while providing a reliable copy workflow.
+
 ## Refined prompt
 
 **First prompt:** "Follow every single step and criterion mentioned in the document ... don't make any features based on guessing."
@@ -95,6 +99,7 @@ The decision column explicitly records whether each suggestion was accepted, cha
 | Put all manual commands inside the 1-3 page narrative | Changed for readability | The concise report contains the results table; exact browser and SQL reproduction steps are retained in a clearly labeled appendix. |
 | Install a new PDF conversion dependency | Rejected | The existing Edge installation and a small auditable renderer produced the attachment without expanding the project dependency surface. |
 | Include the public ChatGPT conversation without reviewing it | Changed for security | The current snapshot was checked for the supplied password fragments and local project path before its URL was added; updating the snapshot after credential-bearing messages must be avoided. |
+| Add JavaScript copy buttons directly inside the PDF | Changed for compatibility | PDF viewers handle interactive scripts inconsistently. The final document uses selectable text plus deep links to GitHub's native code-block copy controls. |
 
 ## Verification
 
@@ -102,7 +107,7 @@ Verification completed so far: the Supabase database linter returned no findings
 
 A production-server check with sentinel deployment variables confirmed environment credentials take precedence over the local file and render both tabs. A partial-variable check confirmed the tabs remain hidden without leaking local fallback credentials. Report claims, account UUIDs, response fields, and expected error text were checked directly against the migration, seed script, route handlers, and executable verification scripts before inclusion.
 
-The PDF was checked for a valid PDF header, non-zero size, a six-page page tree, balanced Markdown code fences, and absence of supplied demo passwords. A rendered HTML preview was visually inspected for typography, table layout, links, and code-block readability before the final PDF was generated.
+The latest copy-ready PDF was checked for a valid PDF header, non-zero size, a seven-page page tree, all five appendix/test deep links, balanced Markdown code fences, and absence of supplied demo passwords. A rendered HTML preview was visually inspected for typography, table layout, links, and code-block readability before the PDF was generated.
 
 The shared-conversation URL returned HTTP `200`. The retrieved snapshot contained neither supplied demo-password fragment nor the local Windows project path at verification time; this check does not authorize updating the public snapshot with later messages.
 

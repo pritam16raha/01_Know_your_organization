@@ -193,10 +193,10 @@ const html = `<!doctype html>
     li { margin: 0 0 1.1mm; }
     strong { color: #0f172a; }
     a { color: #4f46e5; text-decoration: none; }
-    code { background: #f1f5f9; border-radius: 2px; color: #312e81; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.1em 0.28em; }
+    code { background: #f1f5f9; border-radius: 2px; color: #312e81; font-family: Consolas, "Courier New", monospace; font-size: 0.9em; padding: 0.1em 0.28em; user-select: text; -webkit-user-select: text; }
     .code-block { break-inside: avoid; margin: 2.5mm 0 3mm; }
     .code-label { background: #312e81; border-radius: 4px 4px 0 0; color: white; display: inline-block; font-size: 6.5pt; font-weight: 700; letter-spacing: 0.5px; padding: 0.8mm 2mm; text-transform: uppercase; }
-    pre { background: #0f172a; border-radius: 0 4px 4px 4px; color: #e2e8f0; font-family: Consolas, "Courier New", monospace; font-size: 6.8pt; line-height: 1.27; margin: 0; overflow-wrap: anywhere; padding: 2.5mm 3mm; white-space: pre-wrap; }
+    pre { background: #0f172a; border-radius: 0 4px 4px 4px; color: #e2e8f0; font-family: Consolas, "Courier New", monospace; font-size: 6.8pt; line-height: 1.27; margin: 0; overflow-wrap: anywhere; padding: 2.5mm 3mm; white-space: pre-wrap; user-select: text; -webkit-user-select: text; }
     pre code { background: transparent; color: inherit; font-size: inherit; padding: 0; }
     table { border-collapse: collapse; font-size: 7.7pt; margin: 2.5mm 0 4mm; width: 100%; }
     thead { display: table-header-group; }
