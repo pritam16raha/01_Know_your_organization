@@ -1,8 +1,15 @@
-# AI Usage Log
+# AI Usage
 
-## Tool and timebox
+AI use was required for this assessment. It was used as an engineering tool for requirements analysis, architecture, implementation support, security review, testing, debugging, and submission documentation. The candidate retained responsibility for every architectural and security decision and verified generated work before including it.
 
-- Assistant: OpenAI Codex
+## Tools used
+
+- **ChatGPT:** pre-implementation assignment discussion, architecture and security planning, and preparation of the standalone HTML UI prototype used to reduce integration time.
+- **OpenAI Codex:** repository inspection, Next.js/TypeScript implementation, Supabase migration and seed workflow, automated verification, debugging, and documentation.
+- **Shared ChatGPT record:** <https://chatgpt.com/share/6a771f5f-3f8c-83ee-9a30-e969e5791a6f>
+
+## Timebox and responsibility
+
 - Timebox started: 2026-08-08 12:40:21 IST
 - Final implementation and real LAN-browser verification completed: 2026-08-08 13:38:26 IST (58 minutes)
 - Candidate retained final responsibility for architecture, security, and verification.
@@ -17,7 +24,17 @@ Representative prompt excerpt: "Follow every single step and criterion mentioned
 
 This prompt influenced the decision to pause implementation until the assessment, prototype, repository, credentials, timer state, and empty Auth project had been checked.
 
-### Refined prompt after clarification
+### Architecture and tenant-security prompt themes
+
+The initial brief and assignment review were converted into these concrete engineering questions before implementation:
+
+1. Design a minimal Supabase/PostgreSQL schema for a multi-tenant account activity feed with tenant enforcement through RLS.
+2. Review the RLS and relational constraints for any path that could leak or create cross-tenant activity.
+3. Implement tests proving Organization A cannot read or write Organization B's account, including direct database and HTTP-layer evidence.
+
+These are concise paraphrases of the architecture and verification work requested through the broader assessment discussion; they are not presented as verbatim candidate messages.
+
+### Authentication and timebox clarification
 
 The candidate clarified that the two-hour timer began at implementation time, the current `Frontend/.env` contains the required Supabase credentials, and Supabase Auth is empty. They requested fresh demo users created through an appropriate project workflow.
 
@@ -39,7 +56,27 @@ The candidate reported that the quick-access tabs were present locally but absen
 
 The candidate requested an email-ready report covering architecture, tenant security, evidence, trade-offs, incomplete work, and the next two hours. They also required complete manual procedures for tampered cross-tenant reads and writes, identical retries, and the relationship between PostgreSQL `42501` and HTTP `403`, with screenshots and a short video to be attached separately. The report keeps the core narrative within approximately 2-3 pages and places the complete reproducible procedures in an appendix.
 
-## Suggestions and decisions
+### PDF packaging refinement
+
+The candidate asked for the finalized Markdown report to be converted into a PDF suitable for an email attachment. Because no Markdown-to-PDF package was installed, a dependency-free Markdown renderer and the already-installed headless Microsoft Edge browser were used. The generated A4 document keeps the concise report first and begins the manual verification appendix on a new page.
+
+### Public conversation evidence refinement
+
+The candidate asked whether the ChatGPT shared-conversation URL should be included in the emailed report to demonstrate that requirements and architecture were discussed before application code was written and that the standalone HTML prototype intentionally reduced UI implementation time. The link was included as supporting process evidence after a read-only check confirmed that the current shared snapshot did not contain either supplied demo-password fragment or the local Windows project path. The candidate was warned not to update the snapshot after later messages introduced demo credentials, because shared snapshots are publicly accessible to anyone with the link.
+
+## Refined prompt
+
+**First prompt:** "Follow every single step and criterion mentioned in the document ... don't make any features based on guessing."
+
+**Why refinement was required:** The first planning exchange did not yet settle whether the implementation timer had begun or whether Supabase Auth already contained identities. Those facts affected both the workflow and the safe demo-data approach.
+
+**Refined prompt:** "It is starting now ... nothing is present in Supabase Auth; seed fresh demo users in the proper way."
+
+**Result:** The refinement established the timebox, ruled out assumptions about existing users, and led to creating real demo identities through the supported Supabase Auth Admin API rather than inserting directly into `auth.users`.
+
+## Suggestions accepted, modified, and rejected
+
+The decision column explicitly records whether each suggestion was accepted, changed, or rejected and why.
 
 | Suggestion | Decision | Reason / verification plan |
 | --- | --- | --- |
@@ -52,18 +89,24 @@ The candidate requested an email-ready report covering architecture, tenant secu
 | Allow independent account and organization foreign keys | Rejected | A composite `(organization_id, account_id)` foreign key makes tenant inconsistency impossible at the relational layer. |
 | Treat Next.js Proxy as the authorization boundary | Rejected | Version-local Next.js guidance says Proxy is appropriate only for optimistic checks; every route authenticates again and PostgreSQL RLS remains authoritative. |
 | Expose generated demo passwords in documentation | Rejected | Random passwords remain in a local ignored file, while setup remains reproducible through the seed command. |
-| Add one-click demo identity selection to the login form | Accepted after candidate request | The server reads the ignored generated credential file at request time and passes only the two throwaway demo identities to the login UI; no credential is committed. |
+| Add one-click demo identity selection to the login form | Accepted after candidate request | The server loads complete server-side deployment variables first and otherwise reads the ignored generated credential file; only throwaway demo identities are passed to the login UI, and no credential is committed. |
 | Commit demo passwords so Vercel can render the tabs | Rejected | Hosted evaluator credentials are supplied through server-side environment variables; no password is added to source control. |
 | Read quick-access credentials only from a local file | Changed after deployment evidence | Vercel correctly omitted the ignored file, so the server loader was extended to prefer a complete hosted environment and fail closed when configuration is partial. |
 | Put all manual commands inside the 1-3 page narrative | Changed for readability | The concise report contains the results table; exact browser and SQL reproduction steps are retained in a clearly labeled appendix. |
+| Install a new PDF conversion dependency | Rejected | The existing Edge installation and a small auditable renderer produced the attachment without expanding the project dependency surface. |
+| Include the public ChatGPT conversation without reviewing it | Changed for security | The current snapshot was checked for the supplied password fragments and local project path before its URL was added; updating the snapshot after credential-bearing messages must be avoided. |
 
-## Verification of AI output
+## Verification
 
 Verification completed so far: the Supabase database linter returned no findings; both demo users authenticated; the tenant-A activity read and create succeeded; results were newest-first; a retry returned the same entry with `was_duplicate: true`; and tenant A's read and create attempts against tenant B's account both failed with PostgreSQL code `42501`. TypeScript, ESLint, and the production build pass. End-to-end HTTP checks confirmed both demo selectors rendered and returned `401` unauthenticated, `200` read, `201` create, `200` idempotent retry with the same entry ID, and `403` for cross-tenant read and write.
 
 A production-server check with sentinel deployment variables confirmed environment credentials take precedence over the local file and render both tabs. A partial-variable check confirmed the tabs remain hidden without leaking local fallback credentials. Report claims, account UUIDs, response fields, and expected error text were checked directly against the migration, seed script, route handlers, and executable verification scripts before inclusion.
 
-## Corrections
+The PDF was checked for a valid PDF header, non-zero size, a six-page page tree, balanced Markdown code fences, and absence of supplied demo passwords. A rendered HTML preview was visually inspected for typography, table layout, links, and code-block readability before the final PDF was generated.
+
+The shared-conversation URL returned HTTP `200`. The retrieved snapshot contained neither supplied demo-password fragment nor the local Windows project path at verification time; this check does not authorize updating the public snapshot with later messages.
+
+## AI corrections
 
 The initial tooling plan assumed the latest Supabase CLI could complete `supabase link`. CLI 2.112.0 rejected a valid management API timestamp while parsing project API-key metadata. An attempted older CLI was also rejected because its configuration format was obsolete and its dependency chain emitted a security warning, so it was not used. The corrected approach retained CLI 2.112.0 and used the documented IPv4 session-pooler connection with `supabase db push --db-url`; the database password remained local and was percent-encoded in process memory.
 

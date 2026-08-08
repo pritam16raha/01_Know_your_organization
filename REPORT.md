@@ -2,8 +2,8 @@
 
 - **Candidate:** Pritam Raha
 - **Stack:** Next.js 16, TypeScript, Supabase Auth, PostgreSQL, Row Level Security
-- **Repository:** <https://github.com/pritam16raha/01_Know_your_organization>
-- **Live application:** <https://01-know-your-organization.vercel.app/login>
+- **Repository:** [https://github.com/pritam16raha/01_Know_your_organization](https://github.com/pritam16raha/01_Know_your_organization)
+- **Live application:** [https://01-know-your-organization.vercel.app/login](https://01-know-your-organization.vercel.app/login)
 
 ## 1. Summary
 
@@ -61,18 +61,18 @@ The HTTP and real-browser checks run against a started production server. `READM
 
 Observed results:
 
-| Scenario | Expected and observed result |
-| --- | --- |
-| Unauthenticated workspace | HTTP `401` |
-| Authorized activity read | HTTP `200`, newest first |
-| First note creation | HTTP `201`, `wasDuplicate: false` |
-| Identical retry | HTTP `200`, same activity ID, `wasDuplicate: true` |
-| Northstar reads Rival account | HTTP `403`; raw PostgreSQL `42501` |
-| Northstar writes Rival account | HTTP `403`; raw PostgreSQL `42501`; no row created |
-| Database lint | No findings |
-| TypeScript, ESLint, production build | Passed |
+| Scenario                                 | Expected and observed result                                                      |
+| ---------------------------------------- | --------------------------------------------------------------------------------- |
+| Unauthenticated workspace                | HTTP`401`                                                                       |
+| Authorized activity read                 | HTTP`200`, newest first                                                         |
+| First note creation                      | HTTP`201`, `wasDuplicate: false`                                              |
+| Identical retry                          | HTTP`200`, same activity ID, `wasDuplicate: true`                             |
+| Northstar reads Rival account            | HTTP`403`; raw PostgreSQL `42501`                                             |
+| Northstar writes Rival account           | HTTP`403`; raw PostgreSQL `42501`; no row created                             |
+| Database lint                            | No findings                                                                       |
+| TypeScript, ESLint, production build     | Passed                                                                            |
 | Real Edge browser on insecure LAN origin | Login, Globex create, visible success, cleared form, and one rendered note passed |
-| Hosted demo configuration | Complete environment renders both tabs; partial environment fails closed |
+| Hosted demo configuration                | Complete environment renders both tabs; partial environment fails closed          |
 
 The automated checks are reproducible in `Frontend/scripts/`. Appendix A below provides evaluator-friendly manual checks without adding a cross-tenant option to the UI.
 
@@ -89,9 +89,18 @@ With another two hours, I would prioritize:
 3. Pagination and request correlation IDs.
 4. Structured monitoring of `401`, `403`, and PostgreSQL `42501` ratios by route and release, excluding credentials, cookies, tokens, note bodies, and idempotency keys.
 
-The required implementation and real-browser verification were completed from **12:40:21 to 13:38:26 IST (58 minutes)**. A separately recorded post-timebox correction at **15:14 IST** added hosted demo-environment support after deployment exposed the local-file assumption. The complete AI collaboration record is in [`AI_USAGE.md`](AI_USAGE.md).
+The required implementation and real-browser verification were completed from **12:40:21 to 13:38:26 IST (58 minutes)**. A separately recorded post-timebox correction at **15:14 IST** added hosted demo-environment support after deployment exposed the local-file assumption. The complete AI collaboration record is in [`AI_USAGE.md`](https://github.com/pritam16raha/01_Know_your_organization/blob/main/AI_USAGE.md).
 
-## 6. Suggested accompanying evidence
+## 6. Development process and AI collaboration
+
+Before writing application code, I used ChatGPT to review the assignment, clarify the architecture and tenant-security requirements, identify uncertainties, and define the implementation and verification plan. I had also prepared a standalone HTML UI prototype before starting the application implementation. Refactoring that prototype into Next.js and TypeScript reduced UI delivery time and allowed more of the timebox to be spent on Supabase Auth, PostgreSQL RLS, idempotency, error handling, and tests.
+
+- **Shared planning and implementation conversation:** <https://chatgpt.com/share/6a771f5f-3f8c-83ee-9a30-e969e5791a6f>
+- **Structured AI audit trail:** [`AI_USAGE.md`](https://github.com/pritam16raha/01_Know_your_organization/blob/main/AI_USAGE.md)
+
+The repository history and `AI_USAGE.md` record the important prompts, accepted/changed/rejected suggestions, verification steps, and corrections made during implementation.
+
+## 7. Suggested accompanying evidence
 
 Attach these separately or embed selected images before exporting this report to PDF:
 
